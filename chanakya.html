@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Learning Buddy</title>
+  <style>
+    /* Light Mode Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding-top: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(to bottom, #0033cc 0%, #00ffcc 100%);
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    #toggleDarkModeBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #299b6f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1em;
+      padding: 8px 12px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0;
+      transition: color 0.3s ease;
+    }
+
+    h1:hover {
+      color: #FFEB3B;
+    }
+
+    section {
+      margin: 30px 0;
+      padding: 20px;
+      background-color: #BADDFF;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    section:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      color: #333;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: linear-gradient(to bottom, #0033cc 0%, #00ffcc 100%);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    input[type="text"], input[type="radio"] {
+      padding: 10px;
+      width: 70%;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus, input[type="radio"]:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+
+    #quiz-container {
+      margin-top: 20px;
+    }
+
+    .quiz-question {
+      margin-bottom: 20px;
+    }
+
+    #quiz-container input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .score-message {
+      display: none;
+      font-size: 1.5em;
+      color: #4CAF50;
+      margin-top: 20px;
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .task-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    #task-input {
+      padding: 10px;
+      width: 60%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      transition: border-color 0.3s ease;
+    }
+
+    #task-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #task-list li {
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-radius: 5px;
+      transition: transform 0.2s ease;
+    }
+
+    #task-list li:hover {
+      transform: scale(1.05);
+    }
+
+    .remove-task {
+      color: red;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .remove-task:hover {
+      color: darkred;
+    }
+
+    #calendar-container {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-bottom: 20px;
+    }
+
+    #calendar-container div {
+      padding: 10px;
+      text-align: center;
+      background-color: #eaeaea;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    #calendar-container div:hover {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #calendar-container div.selected {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #calendar-container div.today {
+      background-color: #FFEB3B;
+      font-weight: bold;
+    }
+
+    #calendar-container div.event-day {
+      position: relative;
+      background-color: #FFEB3B;
+    }
+
+    #calendar-container div.event-day::after {
+      content: "";
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: red;
+    }
+
+    #event-input-container {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #delete-event-btn {
+      color: red;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Chatbot Styles */
+    #chat-container {
+      width: 100%;
+      margin: 20px 0;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    #chat-box {
+      height: 200px;
+      overflow-y: scroll;
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    #user-input {
+      width: calc(100% - 80px);
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #send-btn {
+      padding: 8px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #send-btn:hover {
+      background-color: #45a049;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background-color: #333;
+      color: #f4f4f9;
+    }
+
+    header.dark-mode {
+      background-color: #555;
+    }
+
+    section.dark-mode {
+      background-color: #444;
+      color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    button.dark-mode {
+      background-color: #555;
+    }
+
+    input[type="text"].dark-mode, input[type="radio"].dark-mode {
+      background-color: #555;
+      color: #fff;
+      border: 1px solid #888;
+    }
+
+    .remove-task.dark-mode {
+      color: #ff6347;
+    }
+
+    .score-message.dark-mode {
+      color: #FFEB3B;
+    }
+
+    #calendar-container div.dark-mode {
+      background-color: #555;
+      color: #fff;
+    }
+
+    body.dark-mode #chat-container {
+      background-color: #444;
+      border-color: #666;
+    }
+
+    body.dark-mode #chat-box {
+      color: #fff;
+    }
+
+    body.dark-mode #user-input {
+      background-color: #555;
+      color: #fff;
+      border-color: #666;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        width: 90%;
+      }
+
+      #task-input, #event-input {
+        width: 80%;
+      }
+
+      #task-list li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #calendar-container {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>ASK CHANAKYA </h1>
+      <button id="toggleDarkModeBtn">Toggle Dark Mode</button>
+    </header>
+
+    <!-- Chatbot Section -->
+    <section class="chatbot">
+      <h2>Learning Assistant</h2>
+      <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Ask me anything...">
+        <button id="send-btn">Send</button>
+      </div>
+    </section>
+
+    <!-- Study Tips Section -->
+    <section class="study-tips">
+      <h2>Study Tips</h2>
+      <p>Use a variety of learning methods. Make sure to take regular breaks and stay hydrated. Don't forget to set realistic goals for yourself!</p>
+    </section>
+
+    <!-- Timer for Study Sessions -->
+    <section class="study-timer">
+      <h2>Study Timer</h2>
+      <p id="timer">00:00</p>
+      <button id="startTimerBtn">Start Timer</button>
+      <button id="stopTimerBtn" style="display:none;">Stop Timer</button>
+    </section>
+
+    <!-- User Feedback Form -->
+    <section class="feedback">
+      <h2>Feedback</h2>
+      <form id="feedbackForm">
+        <input type="text" id="feedbackInput" placeholder="Your feedback" required>
+        <button type="submit">Submit Feedback</button>
+      </form>
+    </section>
+
+    <!-- Quiz Section -->
+    <section class="quiz">
+      <h2>Computer Knowledge Quiz</h2>
+      <button id="startTestBtn">Start Test</button>
+      <div id="quiz-container">
+        <!-- Quiz questions will be generated here -->
+      </div>
+      <button id="submitQuiz" style="display:none;">Submit Quiz</button>
+      <div class="score-message" id="scoreMessage"></div>
+    </section>
+
+    <!-- Task List for Study Planner -->
+    <section class="study-planner">
+      <h2>Study Planner</h2>
+      <div class="task-container">
+        <input type="text" id="task-input" placeholder="Add a task">
+        <button id="addTaskBtn">Add Task</button>
+        <ul id="task-list"></ul>
+      </div>
+    </section>
+
+    <!-- Calendar Section -->
+    <section class="calendar">
+      <h2>Study Calendar</h2>
+      <h3 id="current-month-year"></h3>
+      <div id="calendar-container"></div>
+      <div id="event-input-container">
+        <input type="text" id="event-input" placeholder="Add an event">
+        <button id="addEventBtn">Add Event</button>
+        <button id="deleteEventBtn">Delete Event</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Chatbot functionality
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    const API_KEY = "AIzaSyDuU7CjBPmSns_1H-nMsh-LNV37mhW-u9o"; // Use your own YouTube API key
+    const CHANNEL_ID = "UCX6b17PVsYBQ0ip5gyeme-Q";
+
+    async function fetchVideos(query) {
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&channelId=${CHANNEL_ID}&type=video&key=${API_KEY}&maxResults=3`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.items.length > 0) {
+        return data.items.map(video => ({
+          title: video.snippet.title,
+          link: `https://www.youtube.com/watch?v=${video.id.videoId}`
+        }));
+      } else {
+        return [{ title: "No videos found for this topic!", link: "#" }];
+      }
+    }
+
+    async function handleUserMessage() {
+      const userText = userInput.value.trim();
+      if (!userText) return;
+
+      chatBox.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
+      userInput.value = "";
+
+      const videos = await fetchVideos(userText);
+      let botResponse = "<p><strong>Bot:</strong> Here are some videos for you:<br>";
+
+      videos.forEach(video => {
+        botResponse += `<a href="${video.link}" target="_blank">${video.title}</a><br>`;
+      });
+
+      botResponse += "</p>";
+      chatBox.innerHTML += botResponse;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    sendBtn.addEventListener("click", handleUserMessage);
+    userInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") handleUserMessage();
+    });
+
+    // Existing JavaScript remains unchanged
+    let isDarkMode = false;
+    let timerInterval;
+    let timeInSeconds = 0;
+    const toggleDarkModeBtn = document.getElementById('toggleDarkModeBtn');
+    const body = document.body;
+    const startTimerBtn = document.getElementById('startTimerBtn');
+    const stopTimerBtn = document.getElementById('stopTimerBtn');
+    const timerDisplay = document.getElementById('timer');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const feedbackInput = document.getElementById('feedbackInput');
+    const startTestBtn = document.getElementById('startTestBtn');
+    const quizContainer = document.getElementById('quiz-container');
+    const submitQuizBtn = document.getElementById('submitQuiz');
+    const scoreMessage = document.getElementById('scoreMessage');
+    const taskInput = document.getElementById('task-input');
+    const taskList = document.getElementById('task-list');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const calendarContainer = document.getElementById('calendar-container');
+    const eventInput = document.getElementById('event-input');
+    const addEventBtn = document.getElementById('addEventBtn');
+    const deleteEventBtn = document.getElementById('deleteEventBtn');
+    const currentMonthYear = document.getElementById('current-month-year');
+    const eventInputContainer = document.getElementById('event-input-container');
+
+    // Toggle Dark Mode
+    toggleDarkModeBtn.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      body.classList.toggle('dark-mode', isDarkMode);
+    });
+
+    // Timer Functionality
+    startTimerBtn.addEventListener('click', () => {
+      startTimerBtn.style.display = 'none';
+      stopTimerBtn.style.display = 'inline-block';
+      timerInterval = setInterval(() => {
+        timeInSeconds++;
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }, 1000);
+    });
+
+    stopTimerBtn.addEventListener('click', () => {
+      clearInterval(timerInterval);
+      startTimerBtn.style.display = 'inline-block';
+      stopTimerBtn.style.display = 'none';
+    });
+
+    // Feedback Form Submission
+    feedbackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert(`Thanks for Feedback! Feedback Received: ${feedbackInput.value}`);
+      feedbackInput.value = '';
+    });
+
+    // Study Planner - Add Task
+    addTaskBtn.addEventListener('click', () => {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        const li = document.createElement('li');
+        li.textContent = taskText;
+        const removeBtn = document.createElement('span');
+        removeBtn.textContent = 'Remove';
+        removeBtn.classList.add('remove-task');
+        removeBtn.addEventListener('click', () => {
+          li.remove();
+        });
+        li.appendChild(removeBtn);
+        taskList.appendChild(li);
+        taskInput.value = '';
+      }
+    });
+
+    // Calendar Functionality
+    const generateCalendar = () => {
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      const totalDays = lastDayOfMonth.getDate();
+      const currentDay = today.getDate();
+
+      // Display current month and year
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      currentMonthYear.textContent = `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+
+      calendarContainer.innerHTML = '';
+
+      for (let i = 1; i <= totalDays; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = i;
+
+        // Highlight today's date
+        if (i === currentDay) {
+          dayDiv.classList.add('today');
+        }
+
+        dayDiv.addEventListener('click', () => {
+          // Deselect all other days
+          document.querySelectorAll('#calendar-container div').forEach(day => day.classList.remove('selected'));
+          dayDiv.classList.add('selected');
+          eventInputContainer.style.display = 'block';
+          deleteEventBtn.style.display = dayDiv.classList.contains('event-day') ? 'inline-block' : 'none';
+        });
+
+        calendarContainer.appendChild(dayDiv);
+      }
+    };
+
+    addEventBtn.addEventListener('click', () => {
+      const eventText = eventInput.value.trim();
+      if (eventText) {
+        const selectedDay = document.querySelector('#calendar-container div.selected');
+        if (selectedDay) {
+          selectedDay.classList.add('event-day');
+          selectedDay.setAttribute('data-event', eventText);
+          eventInput.value = '';
+          deleteEventBtn.style.display = 'inline-block';
+        }
+      }
+    });
+
+    deleteEventBtn.addEventListener('click', () => {
+      const selectedDay = document.querySelector('#calendar-container div.selected');
+      if (selectedDay) {
+        selectedDay.classList.remove('event-day');
+        selectedDay.removeAttribute('data-event');
+        deleteEventBtn.style.display = 'none';
+      }
+    });
+
+    // Generate calendar on load
+    generateCalendar();
+
+    // Quiz System
+    startTestBtn.addEventListener('click', () => {
+      quizContainer.innerHTML = `
+        <div class="quiz-question">
+          <p>Question 1: What does CPU stand for?</p>
+          <input type="radio" name="q1" value="A"> A) Central Processing Unit<br>
+          <input type="radio" name="q1" value="B"> B) Central Process Unit<br>
+          <input type="radio" name="q1" value="C"> C) Centralized Processing Unit<br>
+        </div>
+        <div class="quiz-question">
+          <p>Question 2: What is the main function of RAM?</p>
+          <input type="radio" name="q2" value="A"> A) To store data permanently<br>
+          <input type="radio" name="q2" value="B"> B) To store data temporarily<br>
+          <input type="radio" name="q2" value="C"> C) To execute programs<br>
+        </div>
+        <div class="quiz-question">
+          <p>Question 3: Which of the following is an example of an input device?</p>
+          <input type="radio" name="q3" value="A"> A) Monitor<br>
+          <input type="radio" name="q3" value="B"> B) Keyboard<br>
+          <input type="radio" name="q3" value="C"> C) Printer<br>
+        </div>
+        <div class="quiz-question">
+          <p>Question 4: What does the term 'HTTP' stand for?</p>
+          <input type="radio" name="q4" value="A"> A) HyperText Transfer Protocol<br>
+          <input type="radio" name="q4" value="B"> B) Hyper Transfer Text Protocol<br>
+          <input type="radio" name="q4" value="C"> C) Hyperlink Text Protocol<br>
+        </div>
+        <div class="quiz-question">
+          <p>Question 5: What is the purpose of an operating system?</p>
+          <input type="radio" name="q5" value="A"> A) To run applications<br>
+          <input type="radio" name="q5" value="B"> B) To manage computer hardware and software<br>
+          <input type="radio" name="q5" value="C"> C) To store data<br>
+        </div>
+      `;
+      submitQuizBtn.style.display = 'inline-block';
+    });
+
+    submitQuizBtn.addEventListener('click', () => {
+      let score = 0;
+      if (document.querySelector('input[name="q1"]:checked').value === 'A') score++;
+      if (document.querySelector('input[name="q2"]:checked').value === 'B') score++;
+      if (document.querySelector('input[name="q3"]:checked').value === 'B') score++;
+      if (document.querySelector('input[name="q4"]:checked').value === 'A') score++;
+      if (document.querySelector('input[name="q5"]:checked').value === 'B') score++;
+
+      scoreMessage.textContent = `Your Score: ${score}`;
+      scoreMessage.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
+
