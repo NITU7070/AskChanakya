@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Learn with Chanakya</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #0033cc 0%, #00ffcc 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .login-container {
+      border:2px solid white;
+      backdrop-filter: blur(500px);
+
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #287093;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #4560a0;
+    }
+
+    .links {
+      margin-top: 15px;
+    }
+
+    .links a {
+      color: #476aab;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 0.9em;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Eye Animation */
+    .eyes {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+    }
+
+    .eye {
+      width: 40px;
+      height: 40px;
+      background-color: #fff;
+      border: 2px solid hsl(227, 81%, 10%);
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pupil {
+      width: 15px;
+      height: 15px;
+      background-color: #020c30;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.1s ease;
+    }
+
+    /* Signup Page Styles */
+    .signup-container {
+      display: none;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    /* Try for 2 Minutes Styles */
+    .try-container {
+      display: none;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .try-container p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+
+    .try-container button {
+      background-color: #FF9800;
+    }
+
+    .try-container button:hover {
+      background-color: #F57C00;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Page -->
+  <div class="login-container">
+    <div class="eyes">
+      <div class="eye">
+        <div class="pupil"></div>
+      </div>
+      <div class="eye">
+        <div class="pupil"></div>
+      </div>
+    </div>
+    <h1>Login</h1>
+    <input type="email" id="email" placeholder="Enter your Gmail" required>
+    <input type="password" id="password" placeholder="Enter your Password" required>
+    <button id="loginBtn">Login</button>
+    <div class="links">
+      <a href="#" id="signupLink">Signup</a>
+      <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+      <a href="#" id="tryLink">Try for 2 Minutes</a>
+    </div>
+  </div>
+
+  <!-- Signup Page -->
+  <div class="signup-container">
+    <h1>Signup</h1>
+    <input type="email" id="signupEmail" placeholder="Enter your Gmail" required>
+    <input type="password" id="signupPassword" placeholder="Create a Password" required>
+    <button id="signupBtn">Signup</button>
+    <div class="links">
+      <a href="#" id="backToLoginLink">Back to Login</a>
+    </div>
+  </div>
+
+  <!-- Try for 2 Minutes Page -->
+  <div class="try-container">
+    <h1>Try for 2 Minutes</h1>
+    <p>You have temporary access to the website for 2 minutes.</p>
+    <button id="tryBtn">Start Exploring</button>
+  </div>
+
+  <script>
+    // Eye Animation
+    const eyes = document.querySelectorAll('.eye');
+    document.addEventListener('mousemove', (e) => {
+      eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        const eyeCenterX = rect.left + rect.width / 2;
+        const eyeCenterY = rect.top + rect.height / 2;
+        const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
+        const pupil = eye.querySelector('.pupil');
+        const distance = Math.min(10, Math.hypot(e.clientX - eyeCenterX, e.clientY - eyeCenterY) / 10);
+        pupil.style.transform = `translate(-50%, -50%) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+      });
+    });
+
+    // Page Navigation
+    const loginContainer = document.querySelector('.login-container');
+    const signupContainer = document.querySelector('.signup-container');
+    const tryContainer = document.querySelector('.try-container');
+
+    document.getElementById('signupLink').addEventListener('click', () => {
+      loginContainer.style.display = 'none';
+      signupContainer.style.display = 'block';
+    });
+
+    document.getElementById('backToLoginLink').addEventListener('click', () => {
+      signupContainer.style.display = 'none';
+      loginContainer.style.display = 'block';
+    });
+
+    document.getElementById('tryLink').addEventListener('click', () => {
+      loginContainer.style.display = 'none';
+      tryContainer.style.display = 'block';
+    });
+
+    // Login Functionality
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      if (email && password) {
+        alert('Login successful! Redirecting...');
+        window.location.href = 'chanakya.html'; // Replace with your website file
+      } else {
+        alert('Please fill in all fields.');
+      }
+    });
+
+    // Signup Functionality
+    document.getElementById('signupBtn').addEventListener('click', () => {
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      if (email && password) {
+        alert('Signup successful! Redirecting...');
+        window.location.href = 'chanakya.html'; // Replace with your website file
+      } else {
+        alert('Please fill in all fields.');
+      }
+    });
+
+    // Try for 2 Minutes Functionality
+    document.getElementById('tryBtn').addEventListener('click', () => {
+      alert('You have 2 minutes to explore. Redirecting...');
+      window.location.href = 'chanakya.html'; // Replace with your website file
+      setTimeout(() => {
+        alert('Your 2 minutes are up! Please login or signup to continue.');
+        window.location.href = 'index.html'; // Redirect back to login
+      }, 120000); // 2 minutes = 120,000 milliseconds
+    });
+  </script>
+</body>
+</html
